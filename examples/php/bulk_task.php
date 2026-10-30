@@ -3,15 +3,16 @@ $key = getenv('TGVALIDATOR_API_KEY');
 if (!$key) {
     throw new Exception('Set TGVALIDATOR_API_KEY');
 }
-$curl = curl_init('https://tgvalidator.com/api/v1/bulk-tasks');
+$base = rtrim(getenv('API_BASE_URL') ?: 'https://tgvalidator.com', '/');
+$curl = curl_init($base.'/api/v1/bulk-tasks');
 curl_setopt_array($curl, [
     CURLOPT_POST => true,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => ['X-API-Key: '.$key],
     CURLOPT_POSTFIELDS => [
-        'product' => 'tg_batch',
+        'service_type' => 'tg_batch',
         'country' => 'US',
-        'file' => new CURLFile('numbers.txt'),
+        'file' => new CURLFile(getenv('FILE') ?: 'examples/numbers.txt'),
     ],
 ]);
 $response = curl_exec($curl);
